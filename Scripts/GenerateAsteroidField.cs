@@ -7,29 +7,66 @@ public class GenerateAsteroidField : MonoBehaviour
     [SerializeField] private Transform AsteroidPrefab;
     [SerializeField] private Transform SpaceShipPrefab;
 
-    private static int fieldRadius = 1;
-    private static int asteroidCount = 10;
+    [SerializeField] private int fieldRadius = 1;
+    [SerializeField] private int asteroidCount = 10;
+    
+    [SerializeField] private float fieldMultiplier = .02f;
 
     public static Vector3 position;
 
 
-    void Start()
-    {
+    void Start(){
+        StartCoroutine(WaitforClick());
+
+        fieldMultiplier *= fieldRadius;
+
+    IEnumerator WaitforClick(){
+     
+           while(true)
+             {
+                 if(Input.GetMouseButtonDown(0))
+                 {                
+                    GenerateField();
+                    
+                    yield break;                                    
+                 }
+                 yield return null;
+             }
+     }
+
+    void GenerateField(){
         position = transform.position;
 
         Transform ship = GameObject.Instantiate(SpaceShipPrefab, position, transform.rotation);
+        ship.transform.localScale *= fieldMultiplier;
         ship.transform.parent = this.transform;
 
         for (int i = 0; i < asteroidCount; i++){
-            Transform temp = GameObject.Instantiate(AsteroidPrefab, (Random.insideUnitSphere + position) * fieldRadius, Random.rotation);
-            temp.transform.parent = this.transform;
-            temp.localScale = temp.localScale * Random.Range(1f, 4f);
+            Transform asteroid = GameObject.Instantiate(AsteroidPrefab, (Random.insideUnitSphere + position) * fieldRadius, Random.rotation); //spawn asteroid
+            asteroid.transform.localScale *= fieldMultiplier;
+            asteroid.transform.parent = this.transform;
+            asteroid.localScale = asteroid.localScale * Random.Range(5f, 10f);
         }
+
+        // StartCoroutine(WaitThreeSec());
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    
+    // IEnumerator WaitThreeSec(){  
+    //          while(true)
+    //          {
+    //             PushAsteroid();
+    //          }
+    //          yield return new WaitForSeconds(3);
+
+    // }
+
+    // void PushAsteroid(){
+
+    // }
+   
     }
 }
+
+
+
